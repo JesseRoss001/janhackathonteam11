@@ -6,7 +6,7 @@ urlpatterns = [
     path('expenditure/', views.expenditure_view, name='expenditure'),
     
     path('reports/', views.reports_view, name='reports'),
-    path('budget/', views.budget_view, name='budget'),
+    path('manage_budgets/', views.manage_budgets, name='manage_budgets'),
      path('expenses/update/<int:expense_id>/', views.update_expense, name='update_expense'),
     path('expenses/delete/<int:expense_id>/', views.delete_expense, name='delete_expense'),
     path('incomes/update/<int:income_id>/', views.update_income, name='update_income'),
