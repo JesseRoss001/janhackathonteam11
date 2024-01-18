@@ -42,6 +42,10 @@
                 <td>{{ expense.amount }}</td>
                 <td>{{ expense.description }}</td>
                 <td>{{ expense.typical_expense }}</td>
+                <td>
+                    <a href="{% url 'update_expense' expense.id %}">Update</a>
+                    <a href="{% url 'delete_expense' expense.id %}">Delete</a>
+                </td>
             </tr>
             {% endfor %}
         </table>

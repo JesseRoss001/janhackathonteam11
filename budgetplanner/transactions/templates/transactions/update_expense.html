@@ -1,0 +1,12 @@
+<!-- update_expense.html -->
+{% extends 'base.html' %}
+{% block content %}
+<div class="card-body">
+    <h2>Update Expense</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-primary">Update Expense</button>
+    </form>
+</div>
+{% endblock %}

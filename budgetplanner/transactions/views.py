@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.db.models import Sum, F
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -154,7 +154,27 @@ def expenditure_view(request):
 
     return render(request, 'transactions/expenditure.html', context)
 # views.py
+@login_required
+def update_expense(request, expense_id):
+    expense = get_object_or_404(Expense, id=expense_id, user=request.user)
+    if request.method == 'POST':
+        form = ExpenseForm(request.POST, instance=expense)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Expense updated successfully!')
+            return redirect('expenditure')
+    else:
+        form = ExpenseForm(instance=expense)
+    return render(request, 'transactions/update_expense.html', {'form': form})
 
+@login_required
+def delete_expense(request, expense_id):
+    expense = get_object_or_404(Expense, id=expense_id, user=request.user)
+    if request.method == 'POST':
+        expense.delete()
+        messages.success(request, 'Expense deleted successfully!')
+        return redirect('expenditure')
+    return render(request, 'transactions/delete_expense.html', {'expense': expense})
 def reports_view(request):
     return render(request, 'transactions/reports.html')
 
