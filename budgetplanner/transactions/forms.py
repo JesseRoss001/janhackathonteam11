@@ -117,3 +117,4 @@ class IncomeForm(forms.ModelForm):
         if amount < 0:
             raise forms.ValidationError("The amount cannot be negative.")
         return amount
+

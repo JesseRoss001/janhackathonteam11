@@ -179,3 +179,24 @@ def reports_view(request):
     return render(request, 'transactions/reports.html')
 
 # Create your views here.
+@login_required
+def update_income(request, income_id):
+    income = get_object_or_404(Income, id=income_id, user=request.user)
+    if request.method == 'POST':
+        form = IncomeForm(request.POST, instance=income)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Income updated successfully!')
+            return redirect('income')  # Replace with your view name
+    else:
+        form = IncomeForm(instance=income)
+    return render(request, 'transactions/update_income.html', {'form': form})
+
+@login_required
+def delete_income(request, income_id):
+    income = get_object_or_404(Income, id=income_id, user=request.user)
+    if request.method == 'POST':
+        income.delete()
+        messages.success(request, 'Income deleted successfully!')
+        return redirect('income')  # Replace with your view name
+    return render(request, 'transactions/delete_income.html', {'income': income})

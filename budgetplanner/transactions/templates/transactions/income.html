@@ -32,6 +32,10 @@
                 <td>{{ income.date }}</td>
                 <td>{{ income.amount }}</td>
                 <td>{{ income.source }}</td>
+                <td>
+                    <a href="{% url 'update_income' income.id %}">Update</a>
+                    <a href="{% url 'delete_income' income.id %}">Delete</a>
+                </td>
             </tr>
             {% endfor %}
         </table>
