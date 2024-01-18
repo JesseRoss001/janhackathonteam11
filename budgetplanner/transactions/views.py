@@ -3,10 +3,63 @@ from django.db.models import Sum, F
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.utils.timezone import now
-from .forms import ExpenseForm, IncomeForm
-from .models import Expense, Income
+from .forms import ExpenseForm, IncomeForm, BudgetForm 
+from .models import Expense, Income, Budget
 from datetime import datetime, timedelta
 from decimal import Decimal
+
+
+@login_required
+def budget_view(request):
+    user_budget = None
+    try:
+        user_budget = Budget.objects.get(user=request.user)
+    except Budget.DoesNotExist:
+        initial_data = {
+            'total_budget': 0,  # Default value, adjust as necessary
+            # Set other default values if needed
+        }
+        form = BudgetForm(initial=initial_data)
+
+    if request.method == 'POST':
+        form = BudgetForm(request.POST, instance=user_budget)
+        if form.is_valid():
+            budget = form.save(commit=False)
+            if not user_budget:
+                budget.user = request.user
+            budget.save()
+            messages.success(request, 'Budget saved successfully!')
+            return redirect('budget')
+        else:
+            messages.error(request, 'Please correct the errors below.')
+    else:
+        if user_budget:
+            form = BudgetForm(instance=user_budget)
+
+    if user_budget:
+        # Call update_budget_balance only if user_budget is not None
+        user_budget.update_budget_balance()
+        # Other calculations that depend on user_budget existing
+        budget_health = user_budget.budget_health()
+        savings_progress = user_budget.savings_progress()
+        future_budget = user_budget.predict_future_budget(months=6)
+    else:
+        # Default values or logic for when there's no existing budget
+        budget_health = "N/A"
+        savings_progress = 0
+        future_budget = None
+
+    context = {
+        'form': form,
+        'budget': user_budget,
+        'budget_health': budget_health,
+        'savings_progress': savings_progress,
+        'future_budget': future_budget,
+    }
+
+    return render(request, 'transactions/budget.html', context)
+
+
 
 @login_required
 def income_view(request):

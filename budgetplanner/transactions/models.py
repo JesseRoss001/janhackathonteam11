@@ -62,16 +62,56 @@ class Income(models.Model):
         return f"{self.user.username}'s income from {self.source} on {self.date}"
 
 
+class Savings(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='savings')
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    # Add any additional fields as necessary
+
+    def __str__(self):
+        return f"{self.user.username}'s savings"
 
 class Budget(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     total_budget = models.DecimalField(max_digits=10, decimal_places=2)
+    savings_goal = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    budget_balance = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
     start_date = models.DateField()
     end_date = models.DateField()
 
     def __str__(self):
         return f"{self.user.username}'s budget from {self.start_date} to {self.end_date}"
 
+    def update_budget_balance(self):
+        total_income = Income.objects.filter(user=self.user).aggregate(Sum('amount'))['amount__sum'] or Decimal('0.00')
+        total_expense = Expense.objects.filter(user=self.user).aggregate(Sum('amount'))['amount__sum'] or Decimal('0.00')
+        self.budget_balance = total_income - total_expense
+        self.save()
+    def predict_future_budget(self, months=1):
+        # Your logic to predict future budget
+        pass
+
+    def budget_health(self):
+        total_income = Income.objects.filter(user=self.user).aggregate(Sum('amount'))['amount__sum'] or Decimal('0.00')
+        total_expense = Expense.objects.filter(user=self.user).aggregate(Sum('amount'))['amount__sum'] or Decimal('0.00')
+
+        if total_income > 0:
+            health_ratio = total_expense / total_income
+            if health_ratio < 1:
+                return "Healthy"
+            elif health_ratio == 1:
+                return "Balanced"
+            else:
+                return "Overspending"
+        else:
+            return "No Income Data"
+
+    def savings_progress(self):
+        total_savings = self.user.savings.aggregate(Sum('amount'))['amount__sum'] or Decimal('0.00')
+        if self.savings_goal and self.savings_goal > 0:
+            progress_percentage = (total_savings / self.savings_goal) * 100
+            return min(progress_percentage, 100)  # Cap at 100%
+        else:
+            return 0
 # Create your models here.
 class Expense(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)

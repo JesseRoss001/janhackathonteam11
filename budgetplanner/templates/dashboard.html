@@ -13,15 +13,15 @@
         </div>
         <h1 class="display-4">Welcome, {{ user.username }}!</h1>
         {% if user_profile %}
-            <p class="lead">Indebt: ${{ user_profile.indebt }}</p>
-            <p class="lead">Savings: ${{ user_profile.savings }}</p>
-            <p class="lead">Invested: ${{ user_profile.invested }}</p>
-            <p class="lead">Current Balance: ${{ current_balance }}</p>
+        <p class="lead">Indebt: ${{ user_profile.indebt }}</p>
+        <p class="lead">Savings: ${{ user_profile.savings }}</p>
+        <p class="lead">Invested: ${{ user_profile.invested }}</p>
+        <p class="lead">Current Balance: ${{ current_balance }}</p>
         {% else %}
-            <p class="lead">No profile data available.</p>
+        <p class="lead">No profile data available.</p>
         {% endif %}
         {% else %}
-            <p class="lead">Please log in to view this page.</p>
+        <p class="lead">Please log in to view this page.</p>
         {% endif %}
     </div>
 </header>
@@ -33,8 +33,8 @@
                     <h3 class="card-title">Income</h3>
                 </div>
                 <div class="card-body">
-                    
-    <a href="{% url 'income' %}" class="btn btn-primary">View Income Details</a>
+
+                    <a href="{% url 'income' %}" class="btn btn-primary">View Income Details</a>
                 </div>
             </div>
         </div>
@@ -43,11 +43,11 @@
                 <div class="card-header">
                     <h3 class="card-title">Expenditure</h3>
                 </div>
-                <div class="card-body">     
-<div class="card-body">
- 
-    <a href="{% url 'expenditure' %}" class="btn btn-primary">View Expenditure Details</a>
-</div>
+                <div class="card-body">
+                    <div class="card-body">
+
+                        <a href="{% url 'expenditure' %}" class="btn btn-primary">View Expenditure Details</a>
+                    </div>
 
 
                 </div>
@@ -60,6 +60,16 @@
                 </div>
                 <div class="card-body">
                     {% include 'transactions/reports.html' %}
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-3">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Budget</h3>
+                </div>
+                <div class="card-body">
+                    <a href="{% url 'budget' %}" class="btn btn-primary">View Budget Details</a>
                 </div>
             </div>
         </div>
