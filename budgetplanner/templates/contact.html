@@ -1,6 +1,169 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h1>Contact Us</h1>
-<p>This is the contact page content.</p>
+<section>
+    <div>
+      <div class="mt-5 text-center" id="form-box">
+        <div id="message-box"></div>
+        <div id="message-image"></div>
+        <div>
+          <h2>Reach Out To Us</h2>
+    
+          <form id="contact" class="row g-6" method="POST" action="/">
+            <div class="col-md-12">
+              <input
+                type="text"
+                placeholder="Name"
+                aria-label="Enter your name here"
+                class="form-control"
+                name="user_name"
+                required
+              />
+            </div>
+            <div class="col-md-12">
+              <br />
+              <input type="email" placeholder="Email" class="form-control" name="user_email" required />
+            </div>
+    
+            <div class="col-md-12">
+              <br />
+              <input type="text" class="form-control" name="contact_number" placeholder="+35312345678" />
+            </div>
+    
+            <div class="col-md-12">
+              <br />
+              <textarea
+                type="text"
+                placeholder="Message"
+                class="form-control"
+                id="text-area"
+                name="message"
+                aria-label="Enter message here"
+                row="5"
+                required
+              ></textarea>
+            </div>
+    
+            <div class="col-md-12">
+              <br />
+              <button type="submit" class="btn" aria-label="submit form">
+                Send
+              </button>
+              <button type="reset" class="btn" aria-label="Reset form">
+                Reset
+              </button>
+            </div>
+          </form>
+        </div>
+        
+      </div>
+      <div class="text-container mt-5 text-center" id="contact-message-on-submit">
+    
+        <p></p><i>"Sample text"</i></p>
+    
+      </div>
+    </div>
+    </section>
+    <style>
+    
+      #contact-message-on-submit {
+        /* background-image: url('https://placehold.co/600x400'); */
+        background-size: cover;
+        background-repeat: no-repeat;
+        display: none;
+        height: 380px;
+        width: 92%;
+      }  
+    
+    ​
+    
+      #text-color {
+      font-weight: 700;
+      background-color: #ffffffcc; /* Optional: Add a semi-transparent background for better readability */
+      padding: 10px;
+      border-radius: 5px;
+      }
+         /* Form Styles */
+        form {
+        background-color: #ffffffcc;
+        padding: 20px;
+        border-radius: 5px;
+        margin: 20px 0;
+        box-shadow: 4px 4px 6px rgba(0, 0, 0, 0.4);
+        }
+
+        form label {
+        display: block;
+        font-weight: 700;
+        margin-bottom: 8px;
+        }
+
+        form input,
+        form textarea {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 15px;
+        border: 1px solid #eec643;
+        border-radius: 5px;
+        }
+
+        form button {
+        background-color: #183c28;
+        color: #ffffff;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        }
+
+        form button:hover {
+        background-color: #0079bf;
+        }
+
+        /* Optional: Adjust form styles for smaller screens */
+        @media screen and (max-width: 500px) {
+        form {
+            margin: 10px 0;
+        }
+
+        form button {
+            width: 100%;
+        }
+    }
+    
+    </style>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <script>
+      /***
+       * Function that displays success message */
+      
+      window.onload = function() {
+        (function() {emailjs.init('fmW4GpFYwUGFFFHtJ');})();
+        document.getElementById('contact').addEventListener('submit', function(event) {
+            event.preventDefault();
+            messageAlert();
+            emailjs.sendForm('service_mup50nj', 'template_7gaaz3j', this)
+                .then(function() {
+                    console.log('SUCCESS!');
+                }, function(error) {
+                    console.log('FAILED...', error);
+                });
+        });
+      };
+    
+      function messageAlert () {
+        const message = document.getElementById('message-box');
+        const messageImage = document.getElementById('message-image');
+        const formBox = document.getElementById('form-box');
+        const formBox2 =  document.getElementById('contact-message-on-submit');
+    
+        formBox2.innerHTML = "<br><br><br><div id='text-color'><font color='white'>Thank you for reaching out <br>We will get back to you as soon as possible!</font></div>";
+        // messageImage.innerHTML += '<img src="https://placehold.co/600x400" />';
+        formBox.style.display = 'none';
+        formBox2.style.display = 'block';
+      }
+    
+    </script>
+</section>
 {% endblock %}
