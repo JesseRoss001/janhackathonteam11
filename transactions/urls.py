@@ -1,6 +1,7 @@
 from django.urls import path
 from .views import income_view, expenditure_view, reports_view,manage_budgets,update_budget,manage_debts,add_edit_debt,delete_debt
 from . import views
+
 urlpatterns = [
     path('income/', income_view, name='income'),
     path('expenditure/', expenditure_view, name='expenditure'),
