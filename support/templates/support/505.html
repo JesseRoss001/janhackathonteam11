@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<section>
+  <div class="container section-content py-5">
+    <h1 class="page-title">Something is not right...</h1>
+    <div class="row mt-5">
+      <div class="col col-12 col-md-7 order-2 order-md-1">
+        <h2>"HTTP Error 505 - HTTP Version Not Supported</h2>
+        
+        <p class="lead">The server does not support the HTTP protocol version used in the request. Please upgrade your client or contact your system administrator for assistance.
+
+            If you are the system administrator, ensure that the server is configured to support the requested HTTP protocol version.
+            
+            Thank you for your understanding.".</p>
+      </div>
+      <div class="col col-12 col-md-5 order-1 order-md-2 mb-3">
+        <img src="https://images.unsplash.com/photo-1604403428907-673e7f4cd341"
+          alt="505 error image" class="img-fluid">
+      </div>
+    </div>
+
+
+
+  </div>
+</section>
+{% endblock %}
