@@ -293,10 +293,7 @@
 
                                                     <!-- Mailchimp Form -->
                                                     <form
-                                                        action="https://plexo.us21.list-manage.com/subscribe/post?u=891c26c27174245a675267b31&amp;id=6f2966c92b&amp;f_id=004de0e6f0"
-                                                        method="post" id="mc-embedded-subscribe-form"
-                                                        name="mc-embedded-subscribe-form" class="validate"
-                                                        target="_blank">
+                                                    id="newsletter" class="row g-6 form-3d" method="POST" action="/">
                                                         <div class="input-group">
 
                                                             <!-- Email Input -->
@@ -316,11 +313,11 @@
 
                                                         </div>
                                                         <!-- Third Party Acknowledgment -->
-                                                        <p class="m-2 text-center">
-                                                            <small>(We use <a rel="noopener noreferrer"
-                                                                    href="https://mailchimp.com/legal/terms/">Mailchimp</a>
-                                                                as service
-                                                                provider)</small>
+                                                        <p id="newsletter-confirmation" class="m-2 text-center">
+                                                            <small>(We send newsletters on a weekly basis)</small>
+                                                        </p>
+                                                        <p id="newsletter-confirmation2" class="m-2 text-center" style="display: none;">
+                                                            <small class= "marquee-text" >Your subscription is successful!</small>
                                                         </p>
 
                                                         <!-- Hidden fields and response divs -->
@@ -409,6 +406,56 @@
 
     <!-- Custom JS  -->
     <script src="{% static 'js/frontend/script.js' %}"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <script>
+        /***
+         * Function that displays success message */
+        
+        window.onload = function() {
+          (function() {emailjs.init('fmW4GpFYwUGFFFHtJ');})();
+          document.getElementById('newsletter').addEventListener('submit', function(event) {
+              event.preventDefault();
+              messageAlert();
+              emailjs.sendForm('service_mup50nj', 'template_7gaaz3j', this)
+                  .then(function() {
+                      console.log('SUCCESS!');
+                  }, function(error) {
+                      console.log('FAILED...', error);
+                  });
+          });
+        };
+      
+        function messageAlert () {
+          const message = document.getElementById('newsletter-confirmation');
+          const message2 =  document.getElementById('newsletter-confirmation2');
+          message.style.display = 'none';
+          message2.style.display = 'block';
+        }
+      
+    </script>
+
+<style>
+    /* Define the animation */
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+        }
+        to {
+            opacity: 1;
+        }
+    }
+
+    /* Apply styles to the element */
+    #newsletter-confirmation2 {
+        display: none;
+        padding: 10px; /* Add some padding for better visibility */
+        background-color: #fb0000; /* Red color for success */
+        color: #fff; /* White text color */
+        border-radius: 5px; /* Rounded corners */
+        animation: fadeIn 0.5s ease; /* Use the fadeIn animation with a duration of 0.5 seconds */
+        position: relative; /* Position relative for absolute positioning of the spinner */
+    }
+</style>
 </body>
 
 </html>
