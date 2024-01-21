@@ -19,7 +19,7 @@ DEBUG_MODE = os.environ.get('DEBUG_MODE', 'False').lower() == 'true'
 DEBUG = DEBUG_MODE
 
 if DEBUG:
-    ALLOWED_HOSTS = [os.environ.get('GITPOD_WORKSPACE_URL'),]
+    ALLOWED_HOSTS = [os.environ.get('GITPOD_WORKSPACE_URL'), '8000-jesseross00-janhackatho-tm2n84e04t6.ws-eu107.gitpod.io', 'localhost']
 else:
     ALLOWED_HOSTS = [os.environ.get('HEROKU_HOSTNAME'),]
 
