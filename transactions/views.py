@@ -11,6 +11,7 @@ from decimal import Decimal
 from django.shortcuts import render, get_object_or_404, redirect
 from .models import WeeklyBudget, MonthlyBudget, YearlyBudget,DebtDetail
 from .forms import WeeklyBudgetForm, MonthlyBudgetForm, YearlyBudgetForm,DebtDetailForm
+from accounts.models import UserProfile
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.utils.timezone import now
@@ -22,8 +23,15 @@ from django.forms.widgets import SelectDateWidget
 @login_required
 def manage_debts(request):
     user = request.user
+    starting_debt = UserProfile.objects.get(user=user).indebt  # Replace with actual field name
     debts = DebtDetail.objects.filter(user=user)
-    context = {'debts': debts}
+    total_current_debts = sum(debt.amount for debt in debts)
+
+    context = {
+        'debts': debts,
+        'starting_debt': starting_debt,
+        'total_current_debts': total_current_debts
+    }
     return render(request, 'transactions/debts.html', context)
 
 @login_required

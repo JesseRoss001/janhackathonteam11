@@ -9,7 +9,9 @@
         </div>
         <div class="content-container row position-relative">
             <div class="debts-cards col col-12 col-lg-4">
-                <!-- Add cards for total debt summary if needed -->
+                <div class="container section-content mt-5">
+                    <h2>Starting Debt: ${{ starting_debt }}</h2>
+                    <h2>Total Current Debts: ${{ total_current_debts }}</h2>
             </div>
             <div class="recent-debts-table col col-lg-8 mt-3">
                 <div class="card">
@@ -21,7 +23,7 @@
                         <table class="table">
                             <thead>
                                 <tr>
-                                    <th scope="col">Category</th>
+                                    <th scope="col">Name</th>
                                     <th scope="col">Amount</th>
                                     <th scope="col">Interest Rate</th>
                                     <th scope="col">Interest Type</th>
@@ -32,7 +34,7 @@
                             <tbody>
                                 {% for debt in debts %}
                                 <tr>
-                                    <td>{{ debt.category.name }}</td>
+                                    <td>{{ debt.debt_name }}</td>
                                     <td>{{ debt.amount }}</td>
                                     <td>{{ debt.interest_rate }}%</td>
                                     <td>{{ debt.interest_type|title }}</td>

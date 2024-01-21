@@ -14,8 +14,10 @@ from datetime import datetime
 class DebtDetailForm(forms.ModelForm):
     class Meta:
         model = DebtDetail
-        fields = ['category', 'amount', 'interest_rate', 'interest_type']
-
+        fields = ['debt_name', 'amount', 'interest_rate', 'interest_type']  # Updated to include 'debt_name'
+        help_texts = {
+            'interest_rate': 'Annual interest rate (percentage per year)',
+        }
     def clean(self):
         cleaned_data = super().clean()
         amount = cleaned_data.get("amount")
