@@ -1,7 +1,7 @@
 from django import forms
 from datetime import date, timedelta
 from .models import MonthlyBudget, WeeklyBudget, YearlyBudget
-from .models import Expense, ExpenseCategory, Income, IncomeCategory
+from .models import Expense, ExpenseCategory, Income, IncomeCategory,DebtDetail
 from django.core.validators import MinValueValidator
 from django.core.exceptions import ValidationError
 from decimal import Decimal
@@ -10,6 +10,24 @@ from django.forms import SelectDateWidget
 from django.utils.timezone import now
 from datetime import datetime
 
+
+class DebtDetailForm(forms.ModelForm):
+    class Meta:
+        model = DebtDetail
+        fields = ['category', 'amount', 'interest_rate', 'interest_type']
+
+    def clean(self):
+        cleaned_data = super().clean()
+        amount = cleaned_data.get("amount")
+        interest_rate = cleaned_data.get("interest_rate")
+
+        if amount is not None and amount <= 0:
+            self.add_error('amount', "Amount must be greater than zero.")
+
+        if interest_rate is not None and (interest_rate <= 0 or interest_rate > 100):
+            self.add_error('interest_rate', "Interest rate must be between 0 and 100.")
+
+        return cleaned_data
 
 def calculate_start_date():
     # Calculate the start date (Thursday of the current week)

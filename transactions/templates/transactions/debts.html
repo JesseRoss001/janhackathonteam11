@@ -1,0 +1,57 @@
+{% extends 'dashboard-base/base.html' %}
+
+{% block content %}
+<section class="position-relative">
+    <div class="container section-content mt-5">
+        <div class="d-flex justify-content-between align-items-center">
+            <h1 class="page-title">Debts</h1>
+            <button class="btn btn-primary" onclick="location.href='{% url 'add_debt' %}'">Add Debt</button>
+        </div>
+        <div class="content-container row position-relative">
+            <div class="debts-cards col col-12 col-lg-4">
+                <!-- Add cards for total debt summary if needed -->
+            </div>
+            <div class="recent-debts-table col col-lg-8 mt-3">
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Recent Debts</h2>
+                    </div>
+                    <div class="card-body overflow-auto">
+                        {% if debts %}
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Category</th>
+                                    <th scope="col">Amount</th>
+                                    <th scope="col">Interest Rate</th>
+                                    <th scope="col">Interest Type</th>
+                                    <th scope="col">Last Updated</th>
+                                    <th scope="col">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for debt in debts %}
+                                <tr>
+                                    <td>{{ debt.category.name }}</td>
+                                    <td>{{ debt.amount }}</td>
+                                    <td>{{ debt.interest_rate }}%</td>
+                                    <td>{{ debt.interest_type|title }}</td>
+                                    <td>{{ debt.last_updated }}</td>
+                                    <td>
+                                        <a class="link link-success" href="{% url 'edit_debt' debt.id %}">Edit</a>
+                                        <a class="link link-danger" href="{% url 'delete_debt' debt.id %}">Delete</a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                        {% else %}
+                        <p class='lead'>No debts recorded.</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

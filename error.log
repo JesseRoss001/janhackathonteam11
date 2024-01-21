@@ -736,3 +736,7 @@ Traceback (most recent call last):
               ^^^^^^^^^^^^^^^^^^^^^^^^^
 TypeError: expected str, bytes or os.PathLike object, not NoneType
 "GET /demo/ HTTP/1.1" 500 145
+Invalid HTTP_HOST header: '8000-jesseross00-janhackatho-d89dpbmsxk0.ws-eu107.gitpod.io'. You may need to add '8000-jesseross00-janhackatho-d89dpbmsxk0.ws-eu107.gitpod.io' to ALLOWED_HOSTS.
+Invalid HTTP_HOST header: '8000-jesseross00-janhackatho-d89dpbmsxk0.ws-eu107.gitpod.io'. You may need to add '8000-jesseross00-janhackatho-d89dpbmsxk0.ws-eu107.gitpod.io' to ALLOWED_HOSTS.
+Invalid HTTP_HOST header: '8000-jesseross00-janhackatho-d89dpbmsxk0.ws-eu107.gitpod.io'. You may need to add '8000-jesseross00-janhackatho-d89dpbmsxk0.ws-eu107.gitpod.io' to ALLOWED_HOSTS.
+Invalid HTTP_HOST header: '8000-jesseross00-janhackatho-d89dpbmsxk0.ws-eu107.gitpod.io'. You may need to add '8000-jesseross00-janhackatho-d89dpbmsxk0.ws-eu107.gitpod.io' to ALLOWED_HOSTS.

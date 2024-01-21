@@ -9,14 +9,52 @@ from datetime import datetime, timedelta
 from datetime import date
 from decimal import Decimal
 from django.shortcuts import render, get_object_or_404, redirect
-from .models import WeeklyBudget, MonthlyBudget, YearlyBudget
-from .forms import WeeklyBudgetForm, MonthlyBudgetForm, YearlyBudgetForm
+from .models import WeeklyBudget, MonthlyBudget, YearlyBudget,DebtDetail
+from .forms import WeeklyBudgetForm, MonthlyBudgetForm, YearlyBudgetForm,DebtDetailForm
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.utils.timezone import now
 from django.db.models import Min
 from django.forms.widgets import SelectDateWidget
+#Premium Features
 
+
+@login_required
+def manage_debts(request):
+    user = request.user
+    debts = DebtDetail.objects.filter(user=user)
+    context = {'debts': debts}
+    return render(request, 'transactions/debts.html', context)
+
+@login_required
+def add_edit_debt(request, debt_id=None):
+    user = request.user
+    if debt_id:
+        debt = get_object_or_404(DebtDetail, id=debt_id, user=user)
+    else:
+        debt = None
+
+    if request.method == 'POST':
+        form = DebtDetailForm(request.POST, instance=debt)
+        if form.is_valid():
+            new_debt = form.save(commit=False)
+            new_debt.user = user
+            new_debt.save()
+            messages.success(request, 'Debt detail added/updated successfully!')
+            return redirect('manage_debts')
+    else:
+        form = DebtDetailForm(instance=debt)
+
+    return render(request, 'transactions/add_edit_debt.html', {'form': form, 'debt': debt})
+
+@login_required
+def delete_debt(request, debt_id):
+    debt = get_object_or_404(DebtDetail, id=debt_id, user=request.user)
+    if request.method == 'POST':
+        debt.delete()
+        messages.success(request, 'Debt deleted successfully!')
+        return redirect('manage_debts')
+    return render(request, 'transactions/delete_debt.html', {'debt': debt})
 
 @login_required
 def update_budget(request, budget_id, budget_type):

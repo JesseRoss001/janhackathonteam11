@@ -11,4 +11,9 @@ urlpatterns = [
       path('incomes/update/<int:income_id>/', views.update_income, name='update_income'),
     path('incomes/delete/<int:income_id>/', views.delete_income, name='delete_income'),
     path('budgets/update/<int:budget_id>/<str:budget_type>/', update_budget, name='update_budget'),
+        path('debts/', manage_debts, name='manage_debts'),
+    path('debts/add/', add_edit_debt, name='add_debt'),
+    path('debts/edit/<int:debt_id>/', add_edit_debt, name='edit_debt'),
+    path('debts/delete/<int:debt_id>/', delete_debt, name='delete_debt'),
 ]
+
