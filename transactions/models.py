@@ -185,3 +185,64 @@ def get_expense_totals(user):
         'monthly_expense_total': monthly_total,
         'yearly_expense_total': yearly_total
     }
+
+
+#savings invest model 
+
+class SavingsInvestment(models.Model):
+    INVESTMENT_CHOICES = (
+        ('savings', 'Savings'),
+        ('low_risk', 'Low Risk Investment'),
+        ('medium_risk', 'Medium Risk Investment'),
+        ('high_risk', 'High Risk Investment'),
+    )
+    
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    investment_type = models.CharField(max_length=15, choices=INVESTMENT_CHOICES)
+    date_created = models.DateField(auto_now_add=True)
+    last_updated = models.DateField(auto_now=True)
+    best_case_return = models.DecimalField(max_digits=5, decimal_places=2, default=Decimal('0.00'))
+    worst_case_return = models.DecimalField(max_digits=5, decimal_places=2, default=Decimal('0.00'))
+
+    def __str__(self):
+        return f"{self.user.username}'s {self.get_investment_type_display()}"
+
+    def update_investment(self):
+        # Monthly update logic for investment
+        current_date = now().date()
+        if self.last_updated.month != current_date.month:
+            # This is a simplified simulation of the investment return
+            # In real-world scenarios, this should be replaced with actual investment return data
+            if self.investment_type == 'savings':
+                self.amount += self.amount * (Decimal('4.00') / Decimal('1200'))
+            elif self.investment_type == 'low_risk':
+                self.amount += self.amount * ((self.best_case_return + self.worst_case_return) / Decimal('2400'))
+            elif self.investment_type == 'medium_risk':
+                self.amount += self.amount * ((self.best_case_return + self.worst_case_return) / Decimal('2400'))
+            elif self.investment_type == 'high_risk':
+                self.amount += self.amount * ((self.best_case_return + self.worst_case_return) / Decimal('2400'))
+            
+            self.last_updated = current_date
+            self.save()
+
+    @staticmethod
+    def get_estimated_returns(investment_type):
+        estimates = {
+            'savings': (Decimal('4.00'), Decimal('4.00')),
+            'low_risk': (Decimal('3.00'), Decimal('6.00')),
+            'medium_risk': (Decimal('-2.00'), Decimal('8.00')),
+            'high_risk': (Decimal('-20.00'), Decimal('30.00')),
+        }
+        return estimates.get(investment_type, (Decimal('0.00'), Decimal('0.00')))
+
+    @classmethod
+    def create_investment(cls, user, amount, investment_type):
+        best_case, worst_case = cls.get_estimated_returns(investment_type)
+        return cls.objects.create(
+            user=user,
+            amount=amount,
+            investment_type=investment_type,
+            best_case_return=best_case,
+            worst_case_return=worst_case,
+        )

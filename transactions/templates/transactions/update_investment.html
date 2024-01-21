@@ -1,0 +1,12 @@
+{% extends 'dashboard-base/base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="text-center mb-4">Update Investment</h2>
+    <form method="post" action="{% url 'update_investment' investment.id %}">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-primary">Update</button>
+    </form>
+</div>
+{% endblock %}

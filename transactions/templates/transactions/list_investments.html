@@ -1,0 +1,30 @@
+{% extends 'dashboard-base/base.html' %}
+
+{% block content %}
+<!-- ... existing styles ... -->
+<div class="container mt-5">
+    <h2 class="text-center mb-4">Investments</h2>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th scope="col">Amount</th>
+                <th scope="col">Type</th>
+                <th scope="col">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for investment in investments %}
+                <tr>
+                    <td>${{ investment.amount }}</td>
+                    <td>{{ investment.get_investment_type_display }}</td>
+                    <td>
+                        <a href="{% url 'update_investment' investment.id %}" class="btn btn-primary btn-sm">Edit</a>
+                        <a href="{% url 'delete_investment' investment.id %}" class="btn btn-danger btn-sm">Delete</a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <a href="{% url 'add_investment' %}" class="btn btn-success">Add New Investment</a>
+</div>
+{% endblock %}

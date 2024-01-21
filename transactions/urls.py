@@ -16,5 +16,9 @@ urlpatterns = [
     path('debts/add/', add_edit_debt, name='add_debt'),
     path('debts/edit/<int:debt_id>/', add_edit_debt, name='edit_debt'),
     path('debts/delete/<int:debt_id>/', delete_debt, name='delete_debt'),
+    path('investments/', views.list_investments, name='list_investments'),
+    path('investments/add/', views.add_investment, name='add_investment'),
+    path('investments/update/<int:pk>/', views.update_investment, name='update_investment'),
+    path('investments/delete/<int:pk>/', views.delete_investment, name='delete_investment'),
 ]
 

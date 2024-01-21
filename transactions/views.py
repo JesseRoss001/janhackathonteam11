@@ -8,16 +8,81 @@ from .models import Expense, Income
 from datetime import datetime, timedelta
 from decimal import Decimal
 from django.shortcuts import render, get_object_or_404, redirect
-from .models import WeeklyBudget, MonthlyBudget, YearlyBudget,DebtDetail
-from .forms import WeeklyBudgetForm, MonthlyBudgetForm, YearlyBudgetForm,DebtDetailForm
+from .models import WeeklyBudget, MonthlyBudget, YearlyBudget,DebtDetail,SavingsInvestment
+from .forms import WeeklyBudgetForm, MonthlyBudgetForm, YearlyBudgetForm,DebtDetailForm,SavingsInvestmentForm
 from accounts.models import UserProfile
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.utils.timezone import now
 from django.db.models import Min
 from django.forms.widgets import SelectDateWidget
+from django.urls import reverse
 #Premium Features
+@login_required
+def list_investments(request):
+    user = request.user
+    investments = SavingsInvestment.objects.filter(user=user)
+    investment_data = []
+    total_investment = Decimal('0.00')
 
+    # Gather investment data and calculate projections
+    for investment in investments:
+        investment.update_investment()  # Update the investment based on the type and returns
+        best_case_projection = investment.amount * (1 + investment.best_case_return / 100) ** 10  # 10 year projection
+        worst_case_projection = investment.amount * (1 + investment.worst_case_return / 100) ** 10  # 10 year projection
+        total_investment += investment.amount
+        investment_data.append({
+            'id': investment.id,
+            'amount': investment.amount,
+            'type': investment.get_investment_type_display(),
+            'best_case': best_case_projection,
+            'worst_case': worst_case_projection,
+        })
+
+    # Get starting investment and savings from user profile (assumed to be part of the UserProfile model)
+    starting_investments = UserProfile.objects.filter(user=user).values_list('starting_investments', flat=True).first()
+
+    return render(request, 'transactions/list_investments.html', {
+        'investments': investment_data,
+        'total_investment': total_investment,
+        'starting_investments': starting_investments,
+    })
+
+@login_required
+def add_investment(request):
+    if request.method == 'POST':
+        form = SavingsInvestmentForm(request.POST)
+        if form.is_valid():
+            investment = form.save(commit=False)
+            investment.user = request.user
+            investment.save()
+            messages.success(request, 'Investment has been created.')
+            return redirect('list_investments')
+    else:
+        form = SavingsInvestmentForm()
+    return render(request, 'transactions/add_investment.html', {'form': form})
+
+@login_required
+def update_investment(request, pk):
+    investment = get_object_or_404(SavingsInvestment, pk=pk, user=request.user)
+    if request.method == 'POST':
+        form = SavingsInvestmentForm(request.POST, instance=investment)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Investment has been updated.')
+            return redirect('list_investments')
+    else:
+        form = SavingsInvestmentForm(instance=investment)
+    return render(request, 'transactions/update_investment.html', {'form': form, 'investment': investment})
+
+@login_required
+def delete_investment(request, pk):
+    investment = get_object_or_404(SavingsInvestment, pk=pk, user=request.user)
+    if request.method == 'POST':
+        investment.delete()
+        messages.success(request, 'Investment has been deleted.')
+        return redirect('list_investments')
+    return render(request, 'transactions/delete_savings_investment.html', {'investment': investment})
 
 @login_required
 def manage_debts(request):

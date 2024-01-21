@@ -1,7 +1,7 @@
 from django import forms
 from datetime import date, timedelta
 from .models import MonthlyBudget, WeeklyBudget, YearlyBudget
-from .models import Expense, ExpenseCategory, Income, IncomeCategory,DebtDetail
+from .models import Expense, ExpenseCategory, Income, IncomeCategory,DebtDetail,SavingsInvestment
 from django.core.validators import MinValueValidator
 from django.core.exceptions import ValidationError
 from decimal import Decimal
@@ -157,3 +157,18 @@ class YearlyBudgetForm(forms.ModelForm):
             end_date = start_date + timedelta(days=365)
             cleaned_data['end_date'] = end_date
         return cleaned_data
+
+class SavingsInvestmentForm(forms.ModelForm):
+    class Meta:
+        model = SavingsInvestment
+        fields = ['amount', 'investment_type']
+        widgets = {
+            'investment_type': forms.Select(attrs={'class': 'form-control'}),
+            'amount': forms.NumberInput(attrs={'class': 'form-control', 'step': '0.01'}),
+        }
+
+    def clean_amount(self):
+        amount = self.cleaned_data.get('amount')
+        if amount <= 0:
+            raise forms.ValidationError("The amount must be greater than zero.")
+        return amount
