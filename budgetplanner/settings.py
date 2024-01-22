@@ -21,7 +21,7 @@ DEBUG_MODE = os.environ.get('DEBUG_MODE', 'False').lower() == 'true'
 DEBUG = DEBUG_MODE
 
 if DEBUG:
-    ALLOWED_HOSTS = [os.environ.get('GITPOD_WORKSPACE_URL'),]
+    ALLOWED_HOSTS = [os.environ.get('GITPOD_WORKSPACE_URL'), '127.0.0.1']
 else:
     ALLOWED_HOSTS = [os.environ.get('HEROKU_HOSTNAME'),]
 

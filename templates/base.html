@@ -287,8 +287,11 @@
                                                 <div class="content">
 
                                                     <!-- Mailchimp Form -->
-                                                    <form id="newsletter" class="row g-6 form-3d" method="POST"
-                                                        action="/">
+                                                    <form
+                                                        action="https://plexo.us21.list-manage.com/subscribe/post?u=891c26c27174245a675267b31&amp;id=6f2966c92b&amp;f_id=004de0e6f0"
+                                                        method="post" id="mc-embedded-subscribe-form"
+                                                        name="mc-embedded-subscribe-form" class="validate"
+                                                        target="_blank">
                                                         <div class="input-group">
 
                                                             <!-- Email Input -->
@@ -299,20 +302,19 @@
 
                                                             <!-- Send Button -->
                                                             <span class="input-group-btn">
-                                                                <button type="submit"
-                                                                    aria-label="Subscribe to Newsletter"
-                                                                    name="subscribe" id="mc-embedded-subscribe"
+                                                                <button type="submit" aria-label="Subscribe to Newsletter" name="subscribe"
+                                                                    id="mc-embedded-subscribe"
                                                                     class="newsletter-btn px-3 mb-0"><i
-                                                                        class="fa-regular fa-paper-plane"></i>
-                                                                </button>
+                                                                        class="fa-regular fa-paper-plane"></i></button>
                                                             </span>
 
                                                         </div>
                                                         <!-- Third Party Acknowledgment -->
-                                                        <p id="newsletter-confirmation2" class="m-2 text-center"
-                                                            style="display: none;">
-                                                            <small class="marquee-text">Your subscription is
-                                                                successful!</small>
+                                                        <p class="m-2 text-center">
+                                                            <small>(We use <a rel="noopener noreferrer"
+                                                                    href="https://mailchimp.com/legal/terms/">Mailchimp</a>
+                                                                as service
+                                                                provider)</small>
                                                         </p>
 
                                                         <!-- Hidden fields and response divs -->
@@ -398,7 +400,7 @@
             const message = document.getElementById('newsletter-confirmation');
             const message2 = document.getElementById('newsletter-confirmation2');
             message.style.display = 'none';
-            message2.style.display = 'block';
+            // message2.style.display = 'block';
         }
     </script>
 
