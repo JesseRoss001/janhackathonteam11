@@ -1,26 +1,130 @@
-{% extends 'base.html' %}
+{% extends 'dashboard-base/base.html' %}
+
 {% block content %}
-<section>
-    <div class="container section-content mt-5">
-        <h1>Update {{ budget_type }} Budget</h1>
-        <div class="d-flex flex-column mt-3">
-            <form method="post" class="mb-3">
-                {% csrf_token %}
-                {% for field in form %}
-                {% if field.auto_id != 'id_start_date' %}
-                <div class="form-group mt-3">
-                    {{ field|as_crispy_field }}
-                </div>
-                {% else %}
-                <div class="form-group mt-3 ">
-                    {{ field }}
-                </div>
-                {% endif %}
-                {% endfor %}
-                <button type="submit" class="btn btn-primary mt-3">Update Budget</button>
-            </form>
+<!-- Include Chart.js if not already included -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+    /* Custom styles for responsiveness and aesthetics */
+    .graph-container {
+        margin-bottom: 3rem;
+    }
+
+    .investment-title {
+        text-align: center;
+        margin-bottom: 1rem;
+    }
+
+    .investment-details {
+        text-align: center;
+        font-size: 0.9rem;
+        color: #555;
+        margin-bottom: 0.5rem;
+    }
+
+    .total-investment {
+        font-weight: bold;
+        margin-top: 2rem;
+        text-align: center;
+    }
+
+    /* Bootstrap theme colors for graphs */
+    .bg-low-risk { background-color: #28a745; }
+    .bg-medium-risk { background-color: #ffc107; }
+    .bg-high-risk { background-color: #dc3545; }
+    .bg-savings { background-color: #007bff; }
+
+    /* Description text */
+    .description-text {
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+
+    /* Custom button styles */
+    .btn-custom {
+        margin-right: 0.5rem;
+        margin-bottom: 0.5rem;
+    }
+</style>
+
+<div class="container mt-5">
+    <h2 class="text-center mb-4">Investment Projections and Growth</h2>
+    <p class="description-text">
+        Explore the potential growth of your investments over time. Each graph represents the projected trajectory for your individual investments based on best and worst case scenarios.
+    </p>
+
+    <!-- Loop through each investment and create a graph container -->
+    {% for investment in investments %}
+        <div class="graph-container">
+            <h3 class="investment-title">{{ investment.get_investment_type_display }} Investment</h3>
+            <p class="investment-details">Initial Amount: ${{ investment.amount }} | Best Case Annual Return: {{ investment.best_case_return }}% | Worst Case Annual Return: {{ investment.worst_case_return }}%</p>
+            <canvas id="investmentGraph{{ forloop.counter }}" class="mb-3"></canvas>
+            <div class="text-center">
+                <a href="{% url 'update_investment' investment.id %}" class="btn btn-warning btn-sm btn-custom">Edit</a>
+                <a href="{% url 'delete_investment' investment.id %}" class="btn btn-danger btn-sm btn-custom">Delete</a>
+            </div>
         </div>
+    {% endfor %}
+
+    <!-- Overall Investment and Savings Projections -->
+    <h3 class="total-investment">Total Investment and Savings Growth</h3>
+    <canvas id="totalInvestmentGraph"></canvas>
+
+    <!-- Add New Investment Button -->
+    <div class="text-center my-4">
+        <a href="{% url 'add_investment' %}" class="btn btn-success">Add New Investment</a>
     </div>
-</section>
+</div>
 
 {% endblock %}
+
+{% block postloadjs %}
+<script>
+    // Function to render a graph for an individual investment
+    function renderInvestmentGraph(ctx, investment, index) {
+        const bestCaseProjection = calculateProjection(investment.amount, investment.best_case_return);
+        const worstCaseProjection = calculateProjection(investment.amount, investment.worst_case_return);
+
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: Array.from({length: 10}, (_, i) => i + 1), // Years 1 through 10
+                datasets: [
+                    {
+                        label: 'Best Case',
+                        data: bestCaseProjection,
+                        fill: false,
+                        borderColor: 'rgb(40, 167, 69)', // Bootstrap green
+                        tension: 0.1
+                    },
+                    {
+                        label: 'Worst Case',
+                        data: worstCaseProjection,
+                        fill: false,
+                        borderColor: 'rgb(220, 53, 69)', // Bootstrap red
+                        tension: 0.1
+                    }
+                ]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                },
+                maintainAspectRatio: false
+            }
+        });
+    }
+
+    // Function to calculate projections
+    function calculateProjection(amount, rate) {
+        let projection = [];
+        for (let year = 1; year <= 10; year++) {
+            let futureValue = amount * Math.pow(1 + rate / 100, year);
+            projection.push(futureValue.toFixed(2));
+        }
+        return projection;
+    }
+
+    </script>

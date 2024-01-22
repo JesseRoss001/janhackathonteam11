@@ -17,6 +17,8 @@ from django.utils.timezone import now
 from django.db.models import Min
 from django.forms.widgets import SelectDateWidget
 from django.urls import reverse
+from django.core.serializers.json import DjangoJSONEncoder
+import json
 #Premium Features
 @login_required
 def list_investments(request):
@@ -40,13 +42,26 @@ def list_investments(request):
         })
 
     # Get starting investment and savings from user profile (assumed to be part of the UserProfile model)
-    starting_investments = UserProfile.objects.filter(user=user).values_list('starting_investments', flat=True).first()
+    starting_investments = UserProfile.objects.filter(user=user).values_list('invested', flat=True).first()
+    # Prepare data for graph
+    labels = [investment['type'] for investment in investment_data]
+    best_case_values = [float(investment['best_case']) for investment in investment_data]
+    worst_case_values = [float(investment['worst_case']) for investment in investment_data]
 
-    return render(request, 'transactions/list_investments.html', {
+    graph_data = {
+        'labels': labels,
+        'best_case': best_case_values,
+        'worst_case': worst_case_values,
+    }
+
+    context = {
         'investments': investment_data,
         'total_investment': total_investment,
         'starting_investments': starting_investments,
-    })
+        'graph_data_json': json.dumps(graph_data, cls=DjangoJSONEncoder),
+    }
+
+    return render(request, 'transactions/list_investments.html', context)
 
 @login_required
 def add_investment(request):
@@ -82,7 +97,7 @@ def delete_investment(request, pk):
         investment.delete()
         messages.success(request, 'Investment has been deleted.')
         return redirect('list_investments')
-    return render(request, 'transactions/delete_savings_investment.html', {'investment': investment})
+    return render(request, 'transactions/delete_investment.html', {'investment': investment})
 
 @login_required
 def manage_debts(request):

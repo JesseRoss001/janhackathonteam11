@@ -1,30 +1,141 @@
 {% extends 'dashboard-base/base.html' %}
 
 {% block content %}
-<!-- ... existing styles ... -->
+<!-- Include Chart.js if not already included -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+    /* Custom styles for responsiveness and aesthetics */
+    .graph-container {
+        margin-bottom: 3rem;
+    }
+
+    .investment-title {
+        text-align: center;
+        margin-bottom: 1rem;
+    }
+
+    .investment-details {
+        text-align: center;
+        font-size: 0.9rem;
+        color: #555;
+        margin-bottom: 0.5rem;
+    }
+
+    .total-investment {
+        font-weight: bold;
+        margin-top: 2rem;
+        text-align: center;
+    }
+
+    /* Bootstrap theme colors for graphs */
+    .bg-low-risk { background-color: #28a745; }
+    .bg-medium-risk { background-color: #ffc107; }
+    .bg-high-risk { background-color: #dc3545; }
+    .bg-savings { background-color: #007bff; }
+
+    /* Description text */
+    .description-text {
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+
+    /* Custom button styles */
+    .btn-custom {
+        margin-right: 0.5rem;
+        margin-bottom: 0.5rem;
+    }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
 <div class="container mt-5">
-    <h2 class="text-center mb-4">Investments</h2>
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th scope="col">Amount</th>
-                <th scope="col">Type</th>
-                <th scope="col">Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for investment in investments %}
-                <tr>
-                    <td>${{ investment.amount }}</td>
-                    <td>{{ investment.get_investment_type_display }}</td>
-                    <td>
-                        <a href="{% url 'update_investment' investment.id %}" class="btn btn-primary btn-sm">Edit</a>
-                        <a href="{% url 'delete_investment' investment.id %}" class="btn btn-danger btn-sm">Delete</a>
-                    </td>
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-    <a href="{% url 'add_investment' %}" class="btn btn-success">Add New Investment</a>
+    <h2 class="text-center mb-4">Investment Projections and Growth</h2>
+    <p class="description-text">
+        Explore the potential growth of your investments over time. Each graph represents the projected trajectory for your individual investments based on best and worst case scenarios.
+    </p>
+
+    {% if investments %}
+        <!-- Loop through each investment and create a graph container -->
+        {% for investment in investments %}
+            <div class="graph-container">
+                <h3 class="investment-title">{{ investment.get_investment_type_display }} Investment</h3>
+                <p class="investment-details">Initial Amount: ${{ investment.amount }} | Best Case Annual Return: {{ investment.best_case_return }}% | Worst Case Annual Return: {{ investment.worst_case_return }}%</p>
+                <canvas id="investmentGraph{{ forloop.counter }}"></canvas>
+            </div>
+        {% endfor %}
+
+        <!-- Overall Investment and Savings Projections -->
+        <h3 class="total-investment">Total Investment and Savings Growth</h3>
+        <canvas id="totalInvestmentGraph"></canvas>
+
+        <!-- Add New Investment Button -->
+        <div class="text-center my-4">
+            <a href="{% url 'add_investment' %}" class="btn btn-success">Add New Investment</a>
+        </div>
+    {% else %}
+        <div class="text-center my-4">
+            <p>No investments found. Add a new investment to get started.</p>
+            <a href="{% url 'add_investment' %}" class="btn btn-success">Add New Investment</a>
+        </div>
+    {% endif %}
 </div>
+
+<script>
+    // Function to render a graph for an individual investment
+    function renderInvestmentGraph(canvasId, investmentData) {
+        const ctx = document.getElementById(canvasId).getContext('2d');
+        const { amount, best_case_return, worst_case_return } = investmentData;
+        const bestCaseProjection = calculateProjection(amount, best_case_return);
+        const worstCaseProjection = calculateProjection(amount, worst_case_return);
+
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: Array.from({length: 10}, (_, i) => `Year ${i + 1}`), // Years 1 through 10
+                datasets: [
+                    {
+                        label: 'Best Case',
+                        data: bestCaseProjection,
+                        fill: false,
+                        borderColor: 'rgb(40, 167, 69)', // Bootstrap green
+                        tension: 0.1
+                    },
+                    {
+                        label: 'Worst Case',
+                        data: worstCaseProjection,
+                        fill: false,
+                        borderColor: 'rgb(220, 53, 69)', // Bootstrap red
+                        tension: 0.1
+                    }
+                ]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                },
+                maintainAspectRatio: false
+            }
+        });
+    }
+
+    // Function to calculate projections
+    function calculateProjection(amount, rate) {
+        let projection = [];
+        for (let year = 1; year <= 10; year++) {
+            let futureValue = amount * Math.pow(1 + rate / 100, year);
+            projection.push(futureValue.toFixed(2));
+        }
+        return projection;
+    }
+
+    // Initialize all graphs after the page is loaded
+    document.addEventListener('DOMContentLoaded', () => {
+        {% for investment in investments %}
+            renderInvestmentGraph('investmentGraph{{ forloop.counter }}', {{ investment|safe }});
+        {% endfor %}
+    });
+</script>
+
 {% endblock %}
