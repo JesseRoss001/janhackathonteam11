@@ -61,27 +61,6 @@ class DebtDetail(models.Model):
             annual_rate = Decimal(self.interest_rate) / Decimal(100)
             return self.amount * (1 + annual_rate) ** years
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 class ExpenseCategory(models.Model):
     name = models.CharField(max_length=100)
 
